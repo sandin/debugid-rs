@@ -1,7 +1,8 @@
+use std::borrow::Cow;
 use std::process;
 use std::path::Path;
 use clap::Parser;
-use symbolic::common::ByteView;
+use symbolic::common::{ByteView, CodeId};
 use symbolic::debuginfo::Object;
 
 #[derive(Parser, Debug)]
@@ -34,12 +35,12 @@ fn main() {
     println!("HasSymbolTable: {}", object.has_symbols());
     println!("HasDebugInfo: {}", object.has_debug_info());
     println!("HasUnwindInfo: {}", object.has_unwind_info());
-    println!("BuildId: {}", object.code_id().unwrap());
+    println!("BuildId: {}", object.code_id().unwrap_or(CodeId::nil()));
     println!("BreakpadUUID: {}", object.debug_id().breakpad());
 
     match object {
         Object::Pe(ref o) => {
-            println!("PdbFileName: {}", o.debug_file_name().unwrap());
+            println!("PdbFileName: {}", o.debug_file_name().unwrap_or(Cow::Borrowed("")));
         },
         _ => {
             // pass
